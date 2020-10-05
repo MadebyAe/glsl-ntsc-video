@@ -33,21 +33,18 @@ var draw = {
   modulate: regl({
     frag: glsl`
       precision highp float;
-      #pragma glslify: modulate = require('../modulate.glsl')
+      #pragma glslify: modulate_uv = require('../modulate-uv.glsl')
       varying vec2 vpos;
-      uniform float time, tick, n_lines;
-      const float T_LINE = 5.26e-5;
+      uniform float time, n_lines;
       void main () {
         vec2 uv = vpos*vec2(1,-1)*0.5+0.5;
-        float t = uv.x*T_LINE + floor(uv.y*(n_lines-1.0)+0.5)*T_LINE;
         vec3 rgb = mix(
           vec3(0,1,1),
           vec3(1,0,1),
-          //sin(time)*0.5+0.5
-          0.0
+          sin(time)*0.5+0.5
         );
-        float signal = modulate(t,rgb);
-        gl_FragColor = vec4(signal,t,0,1);
+        float signal = modulate_uv(uv, n_lines, rgb);
+        gl_FragColor = vec4(signal,0,0,1);
       }
     `,
     vert: `
@@ -70,19 +67,15 @@ var draw = {
   demodulate: regl({
     frag: glsl`
       precision highp float;
-      #pragma glslify: demodulate = require('../demodulate.glsl')
+      #pragma glslify: demodulate_uv = require('../demodulate-uv.glsl')
       uniform sampler2D signal0, signal1;
       varying vec2 vpos;
       uniform float tick;
       const float PI = ${Math.PI};
-      const float N_LINES = 262.0;
-      const float T_LINE = 5.26e-5;
       void main () {
         vec2 uv = vpos*vec2(1,-1)*0.5+0.5;
-        float t0 = uv.x*T_LINE + floor(uv.y*(262.0-1.0)+0.5)*T_LINE;
-        float t1 = uv.x*T_LINE + floor(uv.y*(263.0-1.0)+0.5)*T_LINE;
-        vec3 rgb0 = demodulate(t0, 262.0, signal0) * mix(0.95,1.0,mod(tick,2.0));
-        vec3 rgb1 = demodulate(t1, 263.0, signal1) * mix(1.0,0.95,mod(tick,2.0));
+        vec3 rgb0 = demodulate_uv(uv, 262.0, signal0) * mix(0.95,1.0,mod(tick,2.0));
+        vec3 rgb1 = demodulate_uv(uv, 263.0, signal1) * mix(1.0,0.95,mod(tick,2.0));
         vec3 rgb = mix(rgb0,rgb1,sin(uv.y*PI*2.0*262.5)*0.5+0.5);
         gl_FragColor = vec4(rgb,1);
       }
