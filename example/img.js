@@ -55,8 +55,8 @@ require('resl')({
           void main () {
             vec2 v = vpos*0.5+0.5;
             vec2 r = vec2(720,485);
-            vec3 rgb0 = demodulate(v, vec3(242,r), signal0);
-            vec3 rgb1 = demodulate(v, vec3(243,r), signal1);
+            vec3 rgb0 = demodulate(v, vec3(262,r), signal0);
+            vec3 rgb1 = demodulate(v, vec3(263,r), signal1);
             vec3 rgb = mix(rgb0,rgb1,sin(v.y*PI*2.0*242.5)*0.5+0.5);
             gl_FragColor = vec4(rgb,1);
           }

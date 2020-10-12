@@ -135,12 +135,12 @@ its `(0,0)` at the bottom-left too.
 
 `n_lines` is the total number of lines (262 or 263).
 
-## `vec3 rgb = demodulate(uv, vec3(v_lines,width,height), sampler2D signal)`
+## `vec3 rgb = demodulate(uv, vec3(n_lines,width,height), sampler2D signal)`
 
 decode a texture `signal` with its red channel set as modulated ntsc in IRE (`-40` to `+120`) for
 `uv` in unit coordinates (values from 0 to 1, inclusive) where `(0,0)` is the bottom-left.
 
-`v_lines` is the number of visible lines (242 or 243).
+`n_lines` is the number of lines (262 or 263).
 
 `width` and `height` are the decoded size of the resulting visual image (use `720,485`).
 
