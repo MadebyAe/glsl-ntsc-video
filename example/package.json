@@ -5,8 +5,5 @@
   "scripts": {
     "img": "budo img.js",
     "fb": "budo fb.js"
-  },
-  "devDependencies": {
-    "budo": "^11.6.4"
   }
 }

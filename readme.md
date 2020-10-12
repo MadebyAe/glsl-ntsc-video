@@ -1,6 +1,6 @@
 # glsl-ntsc-video
 
-glsl module to modulate and demodulate an ntsc video signal
+modulate and demodulate an ntsc video signal in a shader
 
 compile with [glslify][]
 
