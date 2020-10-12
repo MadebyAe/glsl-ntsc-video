@@ -23,12 +23,10 @@ then modulated and demodulated.
 
 ``` js
 var glsl = require('glslify')
-var regl = require('regl')({
-  extensions: [ 'oes_texture_float', 'oes_texture_float_linear', 'webgl_color_buffer_float' ]
-})
+var regl = require('regl')()
 var fbopts = [
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 262 }) },
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 263 }) }
+  { color: regl.texture({ format: 'rgba', width: 720*2, height: 262 }) },
+  { color: regl.texture({ format: 'rgba', width: 720*2, height: 263 }) }
 ]
 var fbo = [
   regl.framebuffer(fbopts[0]),
@@ -79,8 +77,8 @@ require('resl')({
           void main () {
             vec2 v = vpos*0.5+0.5;
             vec2 r = vec2(720,485);
-            vec3 rgb0 = demodulate(v, vec3(242,r), signal0);
-            vec3 rgb1 = demodulate(v, vec3(243,r), signal1);
+            vec3 rgb0 = demodulate(v, vec3(262.0,r), signal0);
+            vec3 rgb1 = demodulate(v, vec3(263.0,r), signal1);
             vec3 rgb = mix(rgb0,rgb1,sin(v.y*PI*2.0*242.5)*0.5+0.5);
             gl_FragColor = vec4(rgb,1);
           }
@@ -105,13 +103,11 @@ require('resl')({
     }
     var tick = 0
     frame(); frame()
-    window.addEventListener('resize', () => {
-      frame(); frame()
-    })
+    window.addEventListener('resize', () => { frame(); frame() })
     function frame () {
       regl.poll()
       fbo[tick%2](fbopts[tick%2])
-      draw.modulate({ framebuffer: fbo[tick%2], n_lines: tick%2 ? 243 : 242 })
+      draw.modulate({ framebuffer: fbo[tick%2], n_lines: tick%2 ? 263 : 262 })
       regl.clear({ color: [0,0,0,1], depth: true })
       draw.demodulate({ signal0: fbo[0], signal1: fbo[1] })
       tick++
