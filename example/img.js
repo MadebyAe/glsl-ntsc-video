@@ -1,27 +1,3 @@
-# glsl-ntsc-video
-
-glsl module to modulate and demodulate an ntsc video signal
-
-compile with [glslify][]
-
-ntsc was a broadcast television standard used in north america, the caribbean, parts of south
-america, and a few places in east asia and the pacific. ntsc was mostly discontinued in 2009 for
-over-the-air use but lives on in legacy consumer electronics such as game consoles and vhs tapes
-made for ntsc regions.
-
-this module has not been tested against an actual ntsc signal, but it can decode its own signals
-with some fidelity.
-
-[glslify]: https://github.com/glslify/glslify
-
-# example
-
-this example modulates and then demodulates a picture from an image file.
-
-check the example directory for a demo that reads from a visual effect written to framebuffer and
-then modulated and demodulated.
-
-``` js
 var glsl = require('glslify')
 var regl = require('regl')({
   extensions: [ 'oes_texture_float', 'oes_texture_float_linear', 'webgl_color_buffer_float' ]
@@ -42,7 +18,7 @@ require('resl')({
       modulate: regl({
         frag: glsl`
           precision highp float;
-          #pragma glslify: modulate = require('glsl-ntsc-video/modulate')
+          #pragma glslify: modulate = require('../modulate.glsl')
           varying vec2 vpos;
           uniform float n_lines;
           uniform sampler2D picture;
@@ -71,7 +47,7 @@ require('resl')({
       demodulate: regl({
         frag: glsl`
           precision highp float;
-          #pragma glslify: demodulate = require('glsl-ntsc-video/demodulate')
+          #pragma glslify: demodulate = require('../demodulate.glsl')
           uniform sampler2D signal0, signal1;
           varying vec2 vpos;
           uniform float tick;
@@ -105,51 +81,14 @@ require('resl')({
     }
     var tick = 0
     frame(); frame()
-    window.addEventListener('resize', () => {
-      frame(); frame()
-    })
+    window.addEventListener('resize', () => { frame(); frame() })
     function frame () {
       regl.poll()
       fbo[tick%2](fbopts[tick%2])
-      draw.modulate({ framebuffer: fbo[tick%2], n_lines: tick%2 ? 243 : 242 })
+      draw.modulate({ framebuffer: fbo[tick%2], n_lines: tick%2 ? 263 : 262 })
       regl.clear({ color: [0,0,0,1], depth: true })
       draw.demodulate({ signal0: fbo[0], signal1: fbo[1] })
       tick++
     }
   }
 })
-```
-
-# api
-
-```
-#pragma glslify: modulate = require('glsl-ntsc-video/modulate')
-#pragma glslify: demodulate = require('glsl-ntsc-video/demodulate')
-```
-
-## `float signal = modulate(vec2 uv, float n_lines, sampler2D picture)`
-
-return the modulated floating point `signal` in IRE (`-40` to `+120`) for `uv` in unit coordinates
-(values from 0 to 1, inclusive) where `(0,0)` is the bottom-left. the `picture` texture should have
-its `(0,0)` at the bottom-left too.
-
-`n_lines` is the total number of lines (262 or 263).
-
-## `vec3 rgb = demodulate(uv, vec3(v_lines,width,height), sampler2D signal)`
-
-decode a texture `signal` with its red channel set as modulated ntsc in IRE (`-40` to `+120`) for
-`uv` in unit coordinates (values from 0 to 1, inclusive) where `(0,0)` is the bottom-left.
-
-`v_lines` is the number of visible lines (242 or 243).
-
-`width` and `height` are the decoded size of the resulting visual image (use `720,485`).
-
-# license
-
-bsd
-
-# install
-
-```
-npm install glsl-ntsc-video
-```

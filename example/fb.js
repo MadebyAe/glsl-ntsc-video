@@ -4,8 +4,8 @@ var regl = require('regl')({
 })
 var fbopts = [
   { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 485 }) },
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 242 }) },
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 243 }) }
+  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 262 }) },
+  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 263 }) }
 ]
 var fbo = [
   regl.framebuffer(fbopts[0]),
@@ -50,7 +50,7 @@ var draw = {
       uniform float n_lines;
       uniform sampler2D picture;
       void main () {
-        float signal = modulate(vec3(vpos*0.5+0.5,1.0), n_lines, picture);
+        float signal = modulate(vpos*0.5+0.5, n_lines, picture);
         gl_FragColor = vec4(signal,0,0,1);
       }
     `,
@@ -80,7 +80,7 @@ var draw = {
       uniform float tick;
       const float PI = ${Math.PI};
       void main () {
-        vec3 v = vec3(vpos*0.5+0.5,1.0);
+        vec2 v = vpos*0.5+0.5;
         vec2 r = vec2(720,485);
         vec3 rgb0 = demodulate(v, vec3(242,r), signal0);
         vec3 rgb1 = demodulate(v, vec3(243,r), signal1);
@@ -107,9 +107,7 @@ var draw = {
   })
 }
 
-var tick = 0
-regl.frame(() => {
-  regl.poll()
+regl.frame(({tick}) => {
   fbo[0](fbopts[0])
   fbo[1+tick%2](fbopts[1+tick%2])
   draw.picture({ framebuffer: fbo[0] })
@@ -122,5 +120,4 @@ regl.frame(() => {
     signal0: fbo[1],
     signal1: fbo[2],
   })
-  tick++
 })
