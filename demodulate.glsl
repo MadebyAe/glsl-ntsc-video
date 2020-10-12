@@ -16,10 +16,10 @@ vec4 read(float t, float n_lines, sampler2D signal) {
 }
 
 vec3 demodulate_t(float t, float n_lines, sampler2D signal) {
-  float m = 2.0;
+  float f = 1.0, m = 2.0*f;
   float ti = t - mod(t,M/m);
-  float tq = t - mod(t,M/m) + M*0.25;
-  float ta = t - mod(t,M/m) + M*0.50;
+  float tq = t - mod(t,M/m) + M*0.25/f;
+  float ta = t - mod(t,M/m) + M*0.50/f;
 
   float signal_i = read(ti, n_lines, signal).x;
   float signal_q = read(tq, n_lines, signal).x;
@@ -32,18 +32,18 @@ vec3 demodulate_t(float t, float n_lines, sampler2D signal) {
   max_y = max(max_y,signal_a);
   float y = min_y*0.5 + max_y*0.5;
 
-  float s = sin(2.0*PI*FSC*t);
-  float c = cos(2.0*PI*FSC*t);
+  float s = sin(2.0*PI*FSC*t*f);
+  float c = cos(2.0*PI*FSC*t*f);
   vec3 yiq = vec3(
     (y-7.5)/(100.0-7.5),
     (signal_i-y)/20.0 * sign(s),
     (signal_q-y)/20.0 * sign(s)
   );
   vec3 rgb = yiq_to_rgb(yiq);
-  float v = (signal_b-7.5)/(100.0-7.5)*2.0-1.0;
-  return clamp(vec3(0), vec3(1), rgb
-    + pow(vec3(abs(v)),vec3(2.2))*sign(v)*length(rgb)*RSQ3*0.5
-  );
+  float d = max(rgb.x,max(rgb.y,rgb.z))-min(rgb.x,min(rgb.y,rgb.z));
+  float v = (signal_b-7.5+(c*yiq.y+s*yiq.z)*20.0)/(100.0-7.5)*2.0-1.0;
+  float p = pow(abs(v),2.2)*sign(v)*pow(max(d,length(rgb)*RSQ3),2.2);
+  return clamp(vec3(0), vec3(1), mix(rgb,vec3(p*0.5+0.5),abs(p)));
 }
 
 vec3 demodulate_uv(vec2 uv, float n_lines, sampler2D signal) {
