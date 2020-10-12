@@ -129,7 +129,7 @@ require('resl')({
 
 ## `float signal = modulate(vec2 uv, float n_lines, sampler2D picture)`
 
-return the modulated floating point `signal` in IRE (`-40` to `+120`) for `uv` in unit coordinates
+return the modulated floating point `signal` from `0.0` to `+1.0` for `uv` in unit coordinates
 (values from 0 to 1, inclusive) where `(0,0)` is the bottom-left. the `picture` texture should have
 its `(0,0)` at the bottom-left too.
 
@@ -137,12 +137,15 @@ its `(0,0)` at the bottom-left too.
 
 ## `vec3 rgb = demodulate(uv, vec3(n_lines,width,height), sampler2D signal)`
 
-decode a texture `signal` with its red channel set as modulated ntsc in IRE (`-40` to `+120`) for
+decode a texture `signal` with its red channel set as modulated ntsc from `0.0` to `+1.0` for
 `uv` in unit coordinates (values from 0 to 1, inclusive) where `(0,0)` is the bottom-left.
 
 `n_lines` is the number of lines (262 or 263).
 
 `width` and `height` are the decoded size of the resulting visual image (use `720,485`).
+
+For higher precision you can use a floating point texture for `signal` although in practice it
+doesn't appear to make much of a difference.
 
 # license
 

@@ -1,11 +1,9 @@
 var glsl = require('glslify')
-var regl = require('regl')({
-  extensions: [ 'oes_texture_float', 'oes_texture_float_linear', 'webgl_color_buffer_float' ]
-})
+var regl = require('regl')()
 var fbopts = [
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 485 }) },
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 262 }) },
-  { color: regl.texture({ format: 'rgba', type: 'float', width: 720*2, height: 263 }) }
+  { color: regl.texture({ width: 720*2, height: 485 }) },
+  { color: regl.texture({ width: 720*2, height: 262 }) },
+  { color: regl.texture({ width: 720*2, height: 263 }) }
 ]
 var fbo = [
   regl.framebuffer(fbopts[0]),

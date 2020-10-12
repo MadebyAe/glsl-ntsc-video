@@ -1,6 +1,7 @@
 #pragma glslify: rgb_to_yiq = require('./rgb-to-yiq.glsl')
 
-const float FSC = 5e6*63.0/88.0;
+//const float FSC = 5e6*63.0/88.0;
+const float FSC = 3579545.5; // 5e6*63.0/88.0
 const float PI = 3.1415927410125732;
 const float L_TIME = 6.35555e-5;
 const float P_TIME = 5.26e-5;
@@ -57,7 +58,7 @@ float modulate(vec2 v, float n_lines, sampler2D picture) {
   signal -= 40.0 * vsync_pre * step(mod(v.x,0.5)*L_TIME,EQ_TIME);
   signal -= 40.0 * vsync_pulse * step(mod(v.x,0.5)*L_TIME,Q_TIME);
   signal -= 40.0 * vsync_post * step(mod(v.x,0.5)*L_TIME,EQ_TIME);
-  return signal;
+  return (signal + 40.0) / (120.0+40.0);
 }
 
 #pragma glslify: export(modulate)

@@ -1,10 +1,10 @@
-const float FSC = 5e6*63.0/88.0;
+const float FSC = 3579545.5; //5e6*63.0/88.0;
 const float PI = 3.1415927410125732;
-const float M = 1.0/FSC;
+const float M = 2.7936508217862865e-7; // 1.0/FSC;
 const float T_LINE = 5.26e-5;
 const float L_TIME = 6.35555e-5;
 const float P_TIME = 5.26e-5;
-const float RSQ3 = 1.0/sqrt(3.0);
+const float RSQ3 = 0.5773502588272095; // 1.0/sqrt(3.0);
 
 #pragma glslify: yiq_to_rgb = require('./yiq-to-rgb.glsl')
 
@@ -21,10 +21,10 @@ vec3 demodulate_t(float t, float n_lines, sampler2D signal) {
   float tq = t - mod(t,M/m) + M*0.25/f;
   float ta = t - mod(t,M/m) + M*0.50/f;
 
-  float signal_i = read(ti, n_lines, signal).x;
-  float signal_q = read(tq, n_lines, signal).x;
-  float signal_a = read(ta, n_lines, signal).x;
-  float signal_b = read(t, n_lines, signal).x;
+  float signal_i = read(ti, n_lines, signal).x*(120.0+40.0)-40.0;
+  float signal_q = read(tq, n_lines, signal).x*(120.0+40.0)-40.0;
+  float signal_a = read(ta, n_lines, signal).x*(120.0+40.0)-40.0;
+  float signal_b = read(t, n_lines, signal).x*(120.0+40.0)-40.0;
 
   float min_y = min(signal_i,signal_q);
   min_y = min(min_y,signal_a);
@@ -39,7 +39,7 @@ vec3 demodulate_t(float t, float n_lines, sampler2D signal) {
     (signal_i-y)/20.0 * sign(s),
     (signal_q-y)/20.0 * sign(s)
   );
-  vec3 rgb = yiq_to_rgb(yiq);
+  vec3 rgb = clamp(vec3(0), vec3(1), yiq_to_rgb(yiq));
   float d = max(rgb.x,max(rgb.y,rgb.z))-min(rgb.x,min(rgb.y,rgb.z));
   float v = (signal_b-7.5+(c*yiq.y+s*yiq.z)*20.0)/(100.0-7.5)*2.0-1.0;
   float p = pow(abs(v),2.2)*sign(v)*pow(max(d,length(rgb)*RSQ3),2.2);
