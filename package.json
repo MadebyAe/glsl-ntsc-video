@@ -1,6 +1,6 @@
 {
   "name": "glsl-ntsc-video",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "modulate and demodulate an ntsc video signal in a shader",
   "devDependencies": {
     "glslify": "^7.1.1",
