@@ -1,8 +1,8 @@
 var glsl = require('glslify')
 var regl = require('regl')()
 var fbopts = [
-  { color: regl.texture({ format: 'rgba', width: 720*2, height: 262 }) },
-  { color: regl.texture({ format: 'rgba', width: 720*2, height: 263 }) }
+  { color: regl.texture({ width: 720*2, height: 262 }) },
+  { color: regl.texture({ width: 720*2, height: 263 }) }
 ]
 var fbo = [
   regl.framebuffer(fbopts[0]),
