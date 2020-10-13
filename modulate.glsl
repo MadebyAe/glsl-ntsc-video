@@ -50,8 +50,9 @@ float modulate(vec2 v, float n_lines, sampler2D picture) {
   float colorburst = step(vt,v.x) * step(v.x,vt+CB_TIME/L_TIME);
   vt += CB_TIME/L_TIME;
   float bporch = step(vt,v.x) * step(v.x,vt+BP_TIME/L_TIME);
-  vec3 rgb = texture2D(picture,uv).xyz * (1.0 - hblank);
+  vec3 rgb = texture2D(picture,uv).xyz;
   float signal = modulate_uv(v, n_lines, rgb);
+  signal *= 1.0 - hblank;
   signal -= 40.0 * syncpulse;
   signal += sin(2.0*PI*FSC)*20.0*colorburst;
   signal *= 1.0 - vblank;
